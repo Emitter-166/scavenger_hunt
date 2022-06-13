@@ -44,12 +44,31 @@ public class Database extends ListenerAdapter {
         }
     }
 
+    public static void addUpdate(String serverId, String key, String value){
+
+        Document document = null;
+        try{
+            document = (Document) collection.find(new Document("serverId", serverId)).cursor().next();
+        }catch (NoSuchElementException exception){
+            createDB(serverId);
+        }
+        Document Updatedocument;
+        try{
+             Updatedocument = new Document(key, value + document.get(key));
+        }catch (Exception exception){
+             Updatedocument = new Document(key, value);
+        }
+        Bson updateKey = new Document("$set", Updatedocument);
+        collection.updateOne(document, updateKey);
+
+    }
+
 
 
     public static void createDB(String Id){
 
         Document document = new Document("serverId", Id);
-        document.append("triggers", "none");
+        document.append("triggers", "");
         //database template will go here
         collection.insertOne(document);
 

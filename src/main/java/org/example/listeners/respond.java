@@ -9,23 +9,24 @@ import org.example.Database;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import static org.example.Database.collection;
 
 public class respond extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e){
         User author = e.getAuthor();
         if(author.isBot()) return;
+        if(e.getMessage().getContentRaw().equalsIgnoreCase("sc start")) return;
+
 
         String guildId = e.getGuild().getId();
         Document serverDoc = null;
         try{
-             serverDoc = (Document) collection.find(new Document("serverId", guildId)).cursor().next();
-        }catch (NoSuchElementException exception){
-            Database.createDB(e.getGuild().getId());
+             serverDoc = Database.get(guildId);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
+
         List<String> triggers = new ArrayList<>();
         try{
             Arrays.stream(((String)(serverDoc).get("triggers")).split("-")).forEach(trigger -> triggers.add(trigger));
@@ -33,7 +34,9 @@ public class respond extends ListenerAdapter {
 
         if((Arrays.stream(triggers.toArray()).anyMatch(trigger -> e.getMessage().getContentRaw().equalsIgnoreCase((String) trigger)))){
             String response = ((String)(serverDoc).get(e.getMessage().getContentRaw()));
-            e.getChannel().sendMessage(response).queue();
+            e.getMessage().delete().queue();
+            e.getChannel().sendMessage(String.format("**%s got the correct answer! next clue is send in your dms :)**", author.getAsMention())).queue();
+            author.openPrivateChannel().flatMap(channel -> channel.sendMessage(response)).queue();
             //here should be leaderboard embed
 
         }
