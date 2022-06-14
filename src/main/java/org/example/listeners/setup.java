@@ -75,8 +75,8 @@ public class setup extends ListenerAdapter {
                         String specialArgs[] = together.toString().split("-");
                         String answer = specialArgs[0];
                         String response = specialArgs[1];
-                        Database.set(serverId, answer, response);
-                        Database.addUpdate(serverId, "triggers", answer + "-");
+                        Database.set(serverId, answer.toLowerCase(), response);
+                        Database.addUpdate(serverId, "triggers", answer.toLowerCase() + "-");
                     }
                     e.getMessage().delete().queue();
 

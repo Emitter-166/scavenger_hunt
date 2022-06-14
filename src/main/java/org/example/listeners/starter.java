@@ -11,7 +11,9 @@ public class starter extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e){
         if(e.getChannel().getType().equals(ChannelType.PRIVATE)) return;
-        if(!(e.getMember().hasPermission(Permission.MODERATE_MEMBERS))) return;
+        try {
+            if (!(e.getMember().hasPermission(Permission.MODERATE_MEMBERS))) return;
+        }catch (Exception exception){}
         if(e.getMessage().getContentRaw().equalsIgnoreCase("sc start")) {
             e.getMessage().delete().queue();
             Document serverDoc = null;

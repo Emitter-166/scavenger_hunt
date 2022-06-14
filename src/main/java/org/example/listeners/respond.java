@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+
 public class respond extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e){
@@ -33,10 +34,13 @@ public class respond extends ListenerAdapter {
         }catch(Exception ex){}
 
         if((Arrays.stream(triggers.toArray()).anyMatch(trigger -> e.getMessage().getContentRaw().equalsIgnoreCase((String) trigger)))){
-            String response = ((String)(serverDoc).get(e.getMessage().getContentRaw()));
-            e.getMessage().delete().queue();
             e.getChannel().sendMessage(String.format("**%s got the correct answer! next clue is send in your dms :)**", author.getAsMention())).queue();
-            author.openPrivateChannel().flatMap(channel -> channel.sendMessage(response)).queue();
+            e.getMessage().delete().queue();
+            String response = ((String)(serverDoc).get(e.getMessage().getContentRaw().toLowerCase()));
+            try{
+                author.openPrivateChannel().flatMap(channel -> channel.sendMessage(response)).queue();
+            }catch (Exception exception){}
+
             //here should be leaderboard embed
 
         }
