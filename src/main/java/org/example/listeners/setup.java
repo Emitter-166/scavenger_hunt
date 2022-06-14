@@ -10,6 +10,8 @@ import org.example.Database;
 public class setup extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e){
+
+        //deleting unnecessary messages
         if(e.getChannel().getType().equals(ChannelType.PRIVATE)) return;
         String args[] = e.getMessage().getContentRaw().split(" ");
         if(e.getAuthor().isBot()){
@@ -41,21 +43,18 @@ public class setup extends ListenerAdapter {
             }
         }
 
-
+        //checking permissions
         try{
             if(!(e.getMember().hasPermission(Permission.MODERATE_MEMBERS))) return;
         }catch (Exception exception){
             return;
         }
 
+        if(e.getAuthor().isBot()) return;
 
         String serverId = e.getGuild().getId();
 
-
-
-        if(e.getAuthor().isBot()) return;
-
-
+        //checking command prefix
         if(args[0].equalsIgnoreCase("sc")){
             switch (args[1]){
                 case "help":
@@ -73,6 +72,7 @@ public class setup extends ListenerAdapter {
                     break;
 
                 case "set":
+                    //setting starter question
                     if(args[2].equalsIgnoreCase("question")){
                         e.getChannel().sendMessage("**Starter question set!**").queue();
                         StringBuilder question = new StringBuilder();
@@ -100,9 +100,12 @@ public class setup extends ListenerAdapter {
                     break;
 
                 case "clear":
+                    //resetting datas about the event
                     e.getChannel().sendMessage("**Scavenger hunt cleared!**").queue();
                     Database.collection.deleteOne(new Document("serverId", serverId));
                     e.getMessage().delete().queue();
+                    respond.leaderBoard.clear();
+                    respond.salt.clear();
                     break;
 
             }

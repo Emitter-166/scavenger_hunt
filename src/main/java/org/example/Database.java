@@ -12,6 +12,7 @@ import org.bson.conversions.Bson;
 import java.util.NoSuchElementException;
 
 public class Database extends ListenerAdapter {
+    //simple database connection
     public static MongoCollection collection;
     @Override
     public void onReady(ReadyEvent e){
