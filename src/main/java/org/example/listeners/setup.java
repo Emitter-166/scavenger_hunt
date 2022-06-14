@@ -11,22 +11,27 @@ public class setup extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e){
         if(e.getChannel().getType().equals(ChannelType.PRIVATE)) return;
-        if(!(e.getMember().hasPermission(Permission.MODERATE_MEMBERS))) return;
-
         String args[] = e.getMessage().getContentRaw().split(" ");
-        String serverId = e.getGuild().getId();
-
-        if(args.length == 3){
-            if(args[2].equalsIgnoreCase("set!**") || args[2].equalsIgnoreCase("cleared!**") ){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
+        if(e.getAuthor().isBot()){
+            if(args.length == 3){
+                if(args[2].equalsIgnoreCase("set!**") || args[2].equalsIgnoreCase("cleared!**") ){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    e.getMessage().delete().queue();
                 }
-                e.getMessage().delete().queue();
-            }
-        } else if (args.length == 4) {
-            if(args[3].equalsIgnoreCase("set!**")){
+            } else if (args.length == 4) {
+                if(args[3].equalsIgnoreCase("set!**")){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    e.getMessage().delete().queue();
+                }
+            }else if(args[args.length -1].equalsIgnoreCase("mission")){
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
@@ -35,6 +40,18 @@ public class setup extends ListenerAdapter {
                 e.getMessage().delete().queue();
             }
         }
+
+
+        try{
+            if(!(e.getMember().hasPermission(Permission.MODERATE_MEMBERS))) return;
+        }catch (Exception exception){
+            return;
+        }
+
+
+        String serverId = e.getGuild().getId();
+
+
 
         if(e.getAuthor().isBot()) return;
 
